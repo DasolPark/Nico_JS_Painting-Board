@@ -5,29 +5,24 @@ const range = document.getElementById('jsRange');
 const mode = document.getElementById('jsMode');
 const save = document.getElementById('jsSave');
 
-const INITIAL_COLOR = '#2c2c2c';
-const CANVAS_SIZE = 700;
+const INITIAL_LINE_COLOR = '#2c2c2c';
+const INITIAL_FILL_COLOR = 'white';
+const INITIAL_LINE_WIDTH = 2.5;
+const CANVAS_WIDTH = 700;
+const CANVAS_HEIGHT = 700;
 
-canvas.width = CANVAS_SIZE;
-canvas.height = CANVAS_SIZE;
+canvas.width = CANVAS_WIDTH;
+canvas.height = CANVAS_HEIGHT;
 
-ctx.fillStyle = 'white';
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+ctx.fillStyle = INITIAL_FILL_COLOR;
+ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-ctx.strokeStyle = INITIAL_COLOR;
-ctx.fillStyle = INITIAL_COLOR;
-ctx.lineWidth = 2.5;
+ctx.strokeStyle = INITIAL_LINE_COLOR;
+ctx.fillStyle = INITIAL_FILL_COLOR;
+ctx.lineWidth = INITIAL_LINE_WIDTH;
 
 let painting = false;
 let filling = false;
-
-function stopPainting() {
-  painting = false;
-}
-
-function startPainting() {
-  painting = true;
-}
 
 function onMouseMove(event) {
   const x = event.offsetX;
@@ -41,10 +36,22 @@ function onMouseMove(event) {
   }
 }
 
-function handleColorClick(event) {
-  const color = event.target.style.backgroundColor;
-  ctx.strokeStyle = color;
-  ctx.fillStyle = color;
+function startPainting() {
+  painting = true;
+}
+
+function stopPainting() {
+  painting = false;
+}
+
+function handleCanvasClick() {
+  if (filling) {
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  }
+}
+
+function handleCMClick(event) {
+  event.preventDefault();
 }
 
 function handleRangeChange(event) {
@@ -62,22 +69,18 @@ function handleModeClick() {
   }
 }
 
-function handleCMClick(event) {
-  event.preventDefault();
-}
-
-function handleCanvasClick() {
-  if (filling) {
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
-}
-
 function handleSaveClick() {
   const image = canvas.toDataURL('image/jpeg');
   const link = document.createElement('a');
   link.href = image;
   link.download = 'PaintJS🎨';
   link.click();
+}
+
+function handleColorClick(event) {
+  const color = event.target.style.backgroundColor;
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
 }
 
 if (canvas) {
@@ -88,10 +91,6 @@ if (canvas) {
   canvas.addEventListener('click', handleCanvasClick);
   canvas.addEventListener('contextmenu', handleCMClick);
 }
-
-Array.from(colors).forEach(color =>
-  color.addEventListener('click', handleColorClick)
-);
 
 if (range) {
   range.addEventListener('input', handleRangeChange);
@@ -104,3 +103,7 @@ if (mode) {
 if (save) {
   save.addEventListener('click', handleSaveClick);
 }
+
+Array.from(colors).forEach(color =>
+  color.addEventListener('click', handleColorClick)
+);
